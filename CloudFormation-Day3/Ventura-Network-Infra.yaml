@@ -1,0 +1,444 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "This template provisions the Ventura Prod Network Infrastructure"
+Metadata: {}
+
+Parameters: 
+  VenturaProdVPCciderBlockPara:
+    Description: Please provide a CIDR block for the VenturaProVPC
+    Type: String
+    Default: 10.0.0.0/16
+  
+  VenturaProdNATalbSN1azPara:
+    Description: Please provide an availability zone for the VenturaProdNATalbSN1
+    Type: AWS::EC2::AvailabilityZone::Name
+
+  VenturaProdNATalbSN1CidrBlockPara:
+    Description: Please provide a CIDR block for the VenturaProdNATalbSN1
+    Type: String
+
+  VenturaProdVPCIdPara:
+    Description: Please provide a VPC Id for Ventura VPC Prod attachment
+    Type: String
+
+  VenturaProdDestinationCidrBlockPara:
+    Description: Please provide the destination CIDR block for your route
+    Type: String
+    Default: 0.0.0.0/0
+
+  VenturaProdInternetGatewayIdPara:
+    Description: Please provide an Internet Gateway ID for your Ventura Prod VPC attachment
+    Type: String
+
+  VenturaProdWebApplicationIdPara:
+    Description: Please provide an Application Id for your Web EC2 instance
+    Type: String
+    Default: dmt468
+
+  VenturaProdWebOwnerPara:
+    Description: Please provide the owner of your Web EC2 instance
+    Type: String
+    Default: Developers-name
+
+  VenturaProdEnvironmentPara:
+    Description: Please provide the environment of your EC2 instance 
+    Type: String
+
+  VenturaProdBudgetCodePara:
+    Description: Please provide the budget code of your EC2 instance
+    Type: String
+    Default: cost-prod
+
+  VenturaProdPatchGroupPara:
+    Description: Please provide the patch group of your EC2 instance
+    Type: String
+    Default: pg-prod
+  
+  VenturaProdComplianceClassificationPara:
+    Description: Please provide the compliance classification for your EC2 instance
+    Type: String
+    Default: nist
+
+  VenturaProdDataClassificationPara:
+    Description: Please provide the data classification for your EC2 instance
+    Type: String
+    Default: pii 
+
+  VenturaProdLOBPara:
+    Description: Please provide the LOB for your EC2 instance
+    Type: String
+    Default: e-commerce
+
+  VenturaProdProjectManagerPara:
+    Description: Please provide the Project Manager of your EC2 instance
+    Type: String
+    Default: alexander-dirus
+
+  VenturaProdProjectNamePara:
+    Description: Please provide the project name of your EC2 instance
+    Type: String
+    Default: ventura-project
+
+  VenturaProdRegionPara:
+    Description: Please provide the region of your EC2 instance
+    Type: AWS::EC2::Region::Name
+  
+  VenturaProdInstanceTypePara:
+    Description: Please provide your EC2 instance type
+    Type: AWS::EC2::InstanceType::Name
+  
+  VenturaProdNumberOfInstancePara:
+    Description: Please provide the number of EC2 instance
+    Type: Number
+    
+  VenturaProdImageIdPara:
+    Description: Please provide the operating system  of your EC2 instance
+    Type: AWS::EC2::ImageId::Name
+    
+  VenturaProdKeyNamePara:
+    Description: Please provide the operating system of your EC2 instance
+    Type: String
+   
+  VenturaProdSecurityGroupIdPara:
+    Description: 
+    Type: List<AWS::EC2::SecurityGroup::Id>
+
+
+Mappings: {}
+
+Conditions: {}
+
+Resources: 
+  VenturaProdVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VenturaProdVPCciderBlockPara
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: VenturaProdVPC
+  #Ventura Prod ALB-NAT Gateway1 Public Subnet1       
+  VenturaProdNATalbSN1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref VenturaProdNATalbSN1azPara
+      VpcId: !Ref VenturaProdVPC
+      CidrBlock: !Ref VenturaProdNATalbSN1CidrBlockPara
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-NAT-ALB-Subnet-1
+
+  VenturaProdALBSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref VenturaProdNATalbSN1azPara
+      VpcId: !Ref VenturaVPC
+      CidrBlock: !Ref VenturaProdNATalbSN1CidrBlockPara
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-ALB-Subnet-2
+
+  VenturaProdWebSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref VenturaProdNATalbSN1azPara
+      VpcId: !Ref VenturaVPC
+      CidrBlock: !Ref VenturaProdNATalbSN1CidrBlockPara
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-Web-Subnet-1
+
+  VenturaProdWebSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref VenturaProdNATalbSN1azPara
+      VpcId: !Ref VenturaVPC
+      CidrBlock: !Ref VenturaProdNATalbSN1CidrBlockPara
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-Web-Subnet-2
+
+  VenturaProdAppSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref VenturaProdNATalbSN1azPara
+      VpcId: !Ref VenturaVPC
+      CidrBlock: !Ref VenturaProdNATalbSN1CidrBlockPara
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-App-Subnet-1
+
+  VenturaProdAppSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref VenturaProdNATalbSN1azPara
+      VpcId: !Ref VenturaVPC
+      CidrBlock: !Ref VenturaProdNATalbSN1CidrBlockPara
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-App-Subnet-2
+
+  VenturaProdDBSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref VenturaProdNATalbSN1azPara
+      VpcId: !Ref VenturaVPC
+      CidrBlock: !Ref VenturaProdNATalbSN1CidrBlockPara
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-DB-Subnet-1
+
+  VenturaProdDBSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Ref VenturaProdNATalbSN1azPara
+      VpcId: !Ref VenturaVPC
+      CidrBlock: !Ref VenturaProdNATalbSN1CidrBlockPara
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-DB-Subnet-2
+
+  VenturaIgw:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: VenturaIgw
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VenturaProdVPCIdPara
+      InternetGatewayId: !Ref VenturaProdInternetGatewayIdPara
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VenturaVPC
+      Tags:
+        - Key: Name
+          Value: Ventura-PublicRouteTable
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: !Ref VenturaProdDestinationCidrBlockPara
+      GatewayId: !Ref VenturaIgw
+
+  VenturaPubRouteTableAssoc1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VenturaProdNATalbSN1
+      RouteTableId: !Ref PublicRouteTable
+
+  VenturaPublicRouteTableAssoc2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VenturaProdALBSubnet2
+      RouteTableId: !Ref PublicRouteTable
+
+  NatGateway1:
+    Type: AWS::EC2::NatGateway
+    DependsOn: NatGateway1EIP
+    Properties:
+      AllocationId: !GetAtt NatGateway1EIP.AllocationId
+      SubnetId: !Ref VenturaProdNATalbSN1
+
+  NatGateway1EIP:
+    Type: AWS::EC2::EIP
+    DependsOn: PrivateSubnet1
+    Properties:
+      Domain: vpc
+
+  NatGateway2:
+    Type: AWS::EC2::NatGateway
+    DependsOn: NatGateway2EIP
+    Properties:
+      AllocationId: !GetAtt NatGateway2EIP.AllocationId
+      SubnetId: !Ref PublicSubnet2
+
+  NatGateway2EIP:
+    Type: AWS::EC2::EIP
+    DependsOn: PublicSubnet2
+    Properties:
+      Domain: vpc
+
+  VenturaProdWebRouteTable1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VenturaVPC
+      Tags:
+        - Key: Name
+          Value: Ventura-prod-Web-RouteTable1
+
+  VenturaProdWebRoute1:
+    Type: AWS::EC2::Route
+    DependsOn: NatGateway1EIP
+    Properties:
+      RouteTableId: !Ref VenturaProdWebRouteTable1
+      DestinationCidrBlock: !Ref VenturaProdDestinationCidrBlockPara
+      NatGatewayId: !Ref NatGateway1
+
+  VenturaProdWebRouteTable2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VenturaVPC
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-Web-RouteTable2
+
+  VenturaProdWebRoute2:
+    Type: AWS::EC2::Route
+    DependsOn: NatGateway2EIP
+    Properties:
+      RouteTableId: !Ref VenturaProdWebRouteTable2
+      DestinationCidrBlock: !Ref VenturaProdDestinationCidrBlockPara
+      NatGatewayId: !Ref NatGateway2
+
+  VenturaProdAppRouteTable1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VenturaVPC
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-App-RouteTable1
+
+  VenturaProdAppRoute1:
+    Type: AWS::EC2::Route
+    DependsOn: NatGateway1EIP
+    Properties:
+      RouteTableId: !Ref VenturaProdAppRouteTable1
+      DestinationCidrBlock: !Ref VenturaProdDestinationCidrBlockPara
+      NatGatewayId: !Ref NatGateway1
+
+  VenturaProdAppRouteTable2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VenturaVPC
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-App-RouteTable2
+
+  VenturaProdAppRoute2:
+    Type: AWS::EC2::Route
+    DependsOn: NatGateway2EIP
+    Properties:
+      RouteTableId: !Ref VenturaProdAppRouteTable2
+      DestinationCidrBlock: !Ref VenturaProdDestinationCidrBlockPara
+      NatGatewayId: !Ref NatGateway2
+
+  VenturaProdDBRouteTable1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VenturaVPC
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-DB-RouteTable1
+
+  VenturaProdDBRoute1:
+    Type: AWS::EC2::Route
+    DependsOn: NatGateway1EIP
+    Properties:
+      RouteTableId: !Ref VenturaProdDBRouteTable1
+      DestinationCidrBlock: !Ref VenturaProdDestinationCidrBlockPara
+      NatGatewayId: !Ref NatGateway1
+
+  VenturaProdDBRouteTable2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VenturaVPC
+      Tags:
+        - Key: Name
+          Value: Ventura-Prod-DB-RouteTable2
+
+  VenturaProdDBRoute2:
+    Type: AWS::EC2::Route
+    DependsOn: NatGateway2EIP
+    Properties:
+      RouteTableId: !Ref VenturaProdDBRouteTable2
+      DestinationCidrBlock: !Ref VenturaProdDestinationCidrBlockPara
+      NatGatewayId: !Ref NatGateway2
+
+  PrivateRouteTableAssoc1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VenturaProdWebSubnet1
+      RouteTableId: !Ref VenturaProdWebRouteTable1
+
+  PrivateRouteTableAssoc2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VenturaProdWebSubnet2
+      RouteTableId: !Ref VenturaProdWebRouteTable2
+
+  PrivateRouteTableAssoc3:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VenturaProdAppSubnet1
+      RouteTableId: !Ref VenturaProdAppRouteTable1
+
+  PrivateRouteTableAssoc4:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VenturaProdAppSubnet2
+      RouteTableId: !Ref VenturaProdAppRouteTable2
+
+  PrivateRouteTableAssoc13:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VenturaProdDBSubnet1
+      RouteTableId: !Ref VenturaProdDBRouteTable1
+
+  PrivateRouteTableAssoc14:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref VenturaProdDBSubnet2
+      RouteTableId: !Ref VenturaProdBDRouteTable2
+
+  VenturaProdWebInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: 
+      DisableApiTermination: 
+      ImageId: 
+      ApplicationId: !Ref VenturaProdWebApplicationIdPara
+      Owner: 
+      InstanceType: 
+      Monitoring: true|false
+      SecurityGroupIds:
+        - sg-id
+      UserData: !Base64 |
+        #!/bin/bash -ex
+        # put your script here
+      Tags:
+        - Key: key
+          Value: value
+
+  VenturaProdWebLoadBalancer:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      Scheme: internal
+      SecurityGroups:
+        - sg-id
+      Subnets:
+        - subnet-id
+      Instances:
+        - instance-id
+      Listeners:
+        - LoadBalancerPort: 
+          InstancePort: 
+          Protocol: HTTP|HTTPS|TCP|SSL
+          InstanceProtocol: HTTP|HTTPS|TCP|SSL
+        - LoadBalancerPort: '443'
+          InstancePort: '443'
+          Protocol: HTTPS
+          InstanceProtocol: HTTPS
+          SSLCertificateId: 
+      HealthCheck:
+        Target: TCP:port or HTTPS|HTTP:port/PathToPing
+        HealthyThreshold: 
+        Interval: 
+        Timeout: 
+        UnhealthyThreshold: 
+
+Outputs: {}
